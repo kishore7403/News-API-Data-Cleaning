@@ -7,6 +7,17 @@
     <groupId>org.example</groupId>
     <artifactId>newsAPI</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.10</version>
+        </dependency>
+
+    </dependencies>
+
+
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>

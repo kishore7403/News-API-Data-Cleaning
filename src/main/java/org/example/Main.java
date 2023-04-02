@@ -1,53 +1,34 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 public class Main {
-    private static HttpURLConnection connection;
     public static void main(String[] args) {
+        String jsonResponse=null;
+        String[] keywords = {"Canada", "University", "Dalhousie",
+                "Halifax", "Canada Education", "Moncton",
+                "hockey", "Fredericton", "celebration"};
 
-        BufferedReader reader;
-        String line;
-        StringBuilder responseContent=new StringBuilder();
+        //------------Code A--------------
+        ExtractionEngine extractionInstance= new ExtractionEngine();
+        for (String keyword: keywords) {
 
-        try {
-            URL url =new URL("https://newsapi.org/v2/top-headlines?q=university&apiKey=ebc0be5b95a24c1a81ba0be1044fa78e");
-            connection=(HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            int status =connection.getResponseCode();
-            System.out.println(status);
-
-            if(status>299){
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                while((line=reader.readLine())!=null){
-                    responseContent.append(line);
-                }
-                reader.close();
-            } else {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while((line=reader.readLine())!=null){
-                    responseContent.append(line);
-                }
-                reader.close();
+            if(jsonResponse==null){
+                jsonResponse=extractionInstance.extractData(keyword)+"\n";
             }
-
-            System.out.println(responseContent.toString());
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            else {
+                jsonResponse = jsonResponse + extractionInstance.extractData(keyword) + "\n";
+            }
         }
-        finally {
-            connection.disconnect();
-        }
+//      System.out.println(jsonResponse);
+
+        //-----------Code B-------------
+        ProcessingEngine dataProcessing = new ProcessingEngine();
+        String processedResponse= dataProcessing.processJSON(jsonResponse);
+        //System.out.println(processedResponse);
+        dataProcessing.createFiles(processedResponse);
+
+        //-----------Code C-----------------
+        TransformationEngine t= new TransformationEngine();
+        t.openEachFiles();
+        t.pushToMongo();
     }
-}
+    }
